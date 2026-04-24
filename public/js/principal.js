@@ -5,6 +5,7 @@
 
 // ─── Inicialização após carregamento ─────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  iniciarCaptchaWhatsApp();
   iniciarNavegacao();
   iniciarAnimacoesHero();
   iniciarAOS();
@@ -869,3 +870,91 @@ function carregarEquipamentosDestaque() {
 
   irPara(0);
 })();
+
+
+// ════════════════════════════════════════════════════════════
+// CAPTCHA WHATSAPP
+// ════════════════════════════════════════════════════════════
+function iniciarCaptchaWhatsApp() {
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"]');
+    if (!link) return;
+    e.preventDefault();
+    const destino = link.href;
+    mostrarCaptchaWA(destino);
+  });
+}
+
+function mostrarCaptchaWA(destino) {
+  const overlay = document.createElement('div');
+  overlay.className = 'wacaptcha-overlay';
+  overlay.innerHTML = `
+    <div class="wacaptcha-box">
+      <div class="wacaptcha-header">
+        <span>Verificação de Segurança</span>
+        <span style="cursor:pointer;font-size:1.1rem;color:rgba(255,255,255,0.5);" id="wac-fechar">✕</span>
+      </div>
+      <div class="wacaptcha-body">
+        <div class="wacaptcha-check-row">
+          <div class="wacaptcha-checkbox" id="wac-checkbox">
+            <div class="wacaptcha-spinner" id="wac-spinner"></div>
+            <div class="wacaptcha-checkmark" id="wac-checkmark"></div>
+          </div>
+          <span class="wacaptcha-label">Não sou um robô</span>
+          <div class="wacaptcha-brand">
+            <span class="wacaptcha-brand__logo">🛡️</span>
+            <span class="wacaptcha-brand__nome">Verificação<br>Segura</span>
+          </div>
+        </div>
+        <p class="wacaptcha-footer">Ao continuar, você será redirecionado ao WhatsApp.</p>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+
+  const fechar = overlay.querySelector('#wac-fechar');
+  fechar.addEventListener('click', () => removerCaptchaWA(overlay));
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) removerCaptchaWA(overlay);
+  });
+
+  const checkbox = overlay.querySelector('#wac-checkbox');
+  const spinner  = overlay.querySelector('#wac-spinner');
+  const check    = overlay.querySelector('#wac-checkmark');
+  let clicado = false;
+
+  checkbox.addEventListener('click', () => {
+    if (clicado) return;
+    clicado = true;
+
+    // Fase 1: spinner
+    checkbox.classList.add('loading');
+    spinner.style.display = 'block';
+
+    setTimeout(() => {
+      // Fase 2: checkmark verde
+      spinner.style.display = 'none';
+      checkbox.classList.remove('loading');
+      checkbox.classList.add('done');
+      check.style.display = 'block';
+
+      setTimeout(() => {
+        removerCaptchaWA(overlay);
+        window.open(destino, '_blank', 'noopener');
+        if (typeof fbq !== 'undefined') fbq('track', 'Contact');
+      }, 600);
+    }, 1400);
+  });
+}
+
+function removerCaptchaWA(overlay) {
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.15s ease';
+  setTimeout(() => {
+    overlay.remove();
+    document.body.style.overflow = '';
+  }, 150);
+}
+

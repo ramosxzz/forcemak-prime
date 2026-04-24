@@ -3,6 +3,153 @@
    Forcemak Prime
    ============================================================ */
 
+/* ════════════════════════════════════════════════════════════
+   CAPTCHA WHATSAPP — modal de verificação
+   ════════════════════════════════════════════════════════════ */
+.wacaptcha-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: wacFadeIn 0.18s ease;
+}
+@keyframes wacFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.wacaptcha-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 340px;
+  overflow: hidden;
+  animation: wacSlideUp 0.22s ease;
+}
+@keyframes wacSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.wacaptcha-header {
+  background: #4a4a4a;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wacaptcha-header span {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.wacaptcha-body {
+  padding: 24px 20px 20px;
+  border: 1.5px solid #d3d3d3;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+.wacaptcha-check-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.wacaptcha-checkbox {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #c1c1c1;
+  border-radius: 3px;
+  background: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.wacaptcha-checkbox:hover {
+  border-color: #aaa;
+}
+.wacaptcha-checkbox.loading {
+  border-color: transparent;
+}
+.wacaptcha-checkbox.done {
+  background: #1a73e8;
+  border-color: #1a73e8;
+}
+.wacaptcha-spinner {
+  display: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid #eee;
+  border-top-color: #4a90d9;
+  border-radius: 50%;
+  animation: wacSpin 0.7s linear infinite;
+  position: absolute;
+}
+@keyframes wacSpin {
+  to { transform: rotate(360deg); }
+}
+.wacaptcha-checkmark {
+  display: none;
+  width: 14px;
+  height: 14px;
+  position: absolute;
+}
+.wacaptcha-checkmark::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  border: 2.5px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+.wacaptcha-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #333;
+  user-select: none;
+}
+.wacaptcha-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: auto;
+  gap: 2px;
+}
+.wacaptcha-brand__logo {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.wacaptcha-brand__nome {
+  font-size: 0.58rem;
+  color: #aaa;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+.wacaptcha-footer {
+  font-size: 0.68rem;
+  color: #aaa;
+  margin-top: 12px;
+  text-align: center;
+  line-height: 1.5;
+}
+.wacaptcha-footer a {
+  color: #4a90d9;
+  text-decoration: none;
+}
+.wacaptcha-footer a:hover { text-decoration: underline; }
+
 
 /* Fix: prevent horizontal scroll on mobile */
 html, body {
