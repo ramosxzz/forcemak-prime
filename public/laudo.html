@@ -16,76 +16,125 @@
   <link rel="stylesheet" href="/css/extras.css">
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1433120138425099');fbq('track','PageView');</script>
   <style>
-    /* ── Tema CheckMaq: preto e amarelo ── */
-    .ck-hero {
-      background: #0d0d0d;
-      padding: 80px 0 64px;
-      position: relative;
+    /* ── Wrapper breadcrumb ── */
+    .ck-breadcrumb-wrap {
+      background: #f5f5f0;
+      padding: 14px 0;
+    }
+    .ck-breadcrumb-wrap .breadcrumb a { color: #555; }
+    .ck-breadcrumb-wrap .breadcrumb span { color: #888; }
+
+    /* ── Documento CheckMaq ── */
+    .ck-doc-wrap {
+      background: #f5f5f0;
+      padding: 40px 0 60px;
+    }
+    .ck-doc {
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.13);
     }
-    .ck-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(245,199,0,0.08) 0%, transparent 70%);
-      pointer-events: none;
+
+    /* Header preto */
+    .ck-doc__header {
+      background: #0d0d0d;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px;
     }
-    .ck-hero .breadcrumb a,
-    .ck-hero .breadcrumb span { color: rgba(255,255,255,0.45); }
-    .ck-hero .breadcrumb a:hover { color: #f5c700; }
-    .ck-hero__titulo {
-      font-size: clamp(2rem, 5vw, 3.2rem);
+    .ck-doc__header-brand {
+      font-size: 1.6rem;
       font-weight: 900;
       color: #fff;
-      line-height: 1.1;
-      margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
-    .ck-hero__titulo span { color: #f5c700; }
-    .ck-hero__sub {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.95rem;
-      line-height: 1.7;
-      max-width: 680px;
-      margin-top: 20px;
+    .ck-doc__header-logo {
+      height: 72px;
+      width: auto;
     }
-    .ck-hero__sub p { margin-bottom: 10px; }
 
-    /* ── Seção principal ── */
-    .ck-main { padding: 72px 0; background: #fff; }
-    .ck-main__grid {
+    /* Body 2 colunas */
+    .ck-doc__body {
+      background: #fff;
       display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 60px;
-      align-items: start;
+      grid-template-columns: 1fr 260px;
+      border-left: 6px solid #f5c700;
     }
-    @media (max-width: 860px) {
-      .ck-main__grid { grid-template-columns: 1fr; gap: 40px; }
+    @media (max-width: 700px) {
+      .ck-doc__body { grid-template-columns: 1fr; }
+      .ck-doc__right { border-top: 3px solid #f5c700; }
     }
-    .ck-main__titulo {
-      font-size: 1.5rem;
-      font-weight: 800;
+
+    .ck-doc__left {
+      padding: 32px 28px;
+    }
+    .ck-doc__left h2 {
+      font-size: 1.25rem;
+      font-weight: 900;
       color: #0d0d0d;
       margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 3px solid #f5c700;
-      display: inline-block;
     }
-    .ck-main__texto {
-      color: #444;
+    .ck-doc__left p {
+      font-size: 0.875rem;
+      color: #333;
       line-height: 1.75;
-      margin-bottom: 16px;
-      font-size: 0.95rem;
+      margin-bottom: 12px;
     }
-    .ck-logos-col {
+
+    .ck-doc__right {
+      padding: 28px 20px;
+      background: #fafaf8;
+      border-left: 1px solid #e8e8e0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 12px;
     }
-    .ck-logos-col img {
-      width: 100%;
-      max-width: 280px;
+    .ck-doc__right p {
+      font-size: 0.8rem;
+      color: #333;
+      line-height: 1.65;
+      text-align: center;
+    }
+    .ck-doc__right p strong {
+      color: #0d0d0d;
+    }
+    .ck-doc__seal {
+      width: 150px;
       height: auto;
+      margin: 4px 0;
+    }
+
+    /* Rodapé amarelo */
+    .ck-doc__footer {
+      background: #f5c700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .ck-doc__footer-logo {
+      height: 36px;
+      width: auto;
+    }
+    .ck-doc__footer-contato {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #0d0d0d;
+      text-align: right;
+    }
+    .ck-doc__footer-contato a {
+      color: #0d0d0d;
+      text-decoration: none;
+    }
+    .ck-doc__cta {
+      text-align: center;
+      margin-top: 28px;
     }
 
     /* ── Presencial ── */
@@ -247,32 +296,61 @@
     </div>
   </nav>
 
-  <!-- Hero CheckMaq -->
-  <section class="ck-hero">
+  <!-- Breadcrumb -->
+  <div class="ck-breadcrumb-wrap">
     <div class="container">
-      <nav class="breadcrumb" aria-label="Caminho" style="margin-bottom:24px;">
-        <a href="/">Início</a><span>/</span><span style="color:rgba(255,255,255,0.45);">Laudo Cautelar</span>
+      <nav class="breadcrumb" aria-label="Caminho">
+        <a href="/">Início</a><span>/</span><span>Laudo Cautelar</span>
       </nav>
-      <h1 class="ck-hero__titulo" data-aos="fade-up"><span>CheckMaq</span> Laudo Cautelar</h1>
-      <div class="ck-hero__sub" data-aos="fade-up" data-aos-delay="100">
-        <p>Nosso propósito é oferecer segurança, transparência e credibilidade a todos os envolvidos nas negociações de máquinas: concessionárias, locadores, construtoras, compradores, vendedores, seguradoras e financeiras.</p>
-        <p>Com metodologia própria e know-how técnico, realizamos avaliações completas de confiabilidade, histórico técnico, documentação e autenticidade dos equipamentos, assegurando que cada transação ocorra com total clareza.</p>
-      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Laudo de Avaliação de Mercado -->
-  <section class="ck-main">
+  <!-- Documento CheckMaq -->
+  <section class="ck-doc-wrap">
     <div class="container">
-      <div data-aos="fade-up" style="max-width:720px;margin:0 auto;text-align:center;">
-        <h2 class="ck-main__titulo">Laudo de Avaliação de Mercado</h2>
-        <p class="ck-main__texto" style="text-align:left;">
-          O Laudo de Avaliação de Mercado determina o valor real de um equipamento com base em condição, mercado atual e histórico de transações. Essencial para quem compra, vende ou precisa de garantia para financiamento.
-        </p>
-        <div style="display:flex;justify-content:center;align-items:center;gap:32px;margin:32px 0;flex-wrap:wrap;">
-          <img src="/imagens/uploads/checkmaq-laudo.png" alt="CheckMaq — Laudo Cautelar" style="max-width:220px;width:100%;height:auto;">
-          <img src="/imagens/uploads/checkmaq-aprovado.png" alt="CheckMaq Aprovado" style="max-width:200px;width:100%;height:auto;">
+      <div class="ck-doc" data-aos="fade-up">
+
+        <!-- Header preto -->
+        <div class="ck-doc__header">
+          <span class="ck-doc__header-brand">CheckMaq</span>
+          <img src="/imagens/uploads/checkmaq-laudo.png" alt="CheckMaq Laudo Cautelar" class="ck-doc__header-logo">
         </div>
+
+        <!-- Body -->
+        <div class="ck-doc__body">
+          <!-- Coluna esquerda — textos -->
+          <div class="ck-doc__left">
+            <h2>CheckMaq Laudo Cautelar</h2>
+            <p><strong>Duas trajetórias sólidas. Um mesmo propósito: elevar o padrão de confiança no mercado de máquinas pesadas.</strong></p>
+            <p>A CheckMaq nasceu da união de duas empresas com mais de uma década de experiência nos segmentos da linha pesada. De um lado, uma empresa com profundo domínio técnico e de engenharia, responsável por análises precisas e criteriosas. Do outro, uma empresa com vasta experiência comercial, atuante na venda e aquisição de equipamentos, conhecedora das demandas reais do mercado.</p>
+            <p>Dessa união estratégica surgiu uma nova força: a CheckMaq, empresa especializada em Laudo Cautelar para máquinas e equipamentos da linha amarela.</p>
+            <p>Nosso propósito é oferecer segurança, transparência e credibilidade a todos os envolvidos nas negociações de máquinas: concessionárias, locadores, construtoras, compradores, vendedores, seguradoras e financeiras.</p>
+            <p>Com metodologia própria e know-how técnico, realizamos avaliações completas de confiabilidade, histórico técnico, documentação e autenticidade dos equipamentos, assegurando que cada transação ocorra com total clareza.</p>
+            <p>A CheckMaq surge, portanto, não apenas como um serviço de laudo, mas como um novo padrão de credibilidade no mercado da linha amarela, o elo de confiança entre quem vende, quem compra e quem garante o investimento.</p>
+          </div>
+
+          <!-- Coluna direita — selo -->
+          <div class="ck-doc__right">
+            <p>Procure sempre por equipamentos que exibem o nosso selo de qualidade.</p>
+            <p>Ele é mais do que um símbolo, é a garantia de segurança, credibilidade e confiança.</p>
+            <p>Com ele, você tem a certeza de estar adquirindo um equipamento cuidadosamente avaliado, de uma empresa que valoriza cada detalhe e preza pela excelência em tudo o que oferece.</p>
+            <img src="/imagens/uploads/checkmaq-aprovado.png" alt="CheckMaq Aprovado" class="ck-doc__seal">
+            <p><strong>Nosso selo é o seu sinal verde para um ótimo negócio, com total tranquilidade e confiança.</strong></p>
+          </div>
+        </div>
+
+        <!-- Rodapé amarelo -->
+        <div class="ck-doc__footer">
+          <img src="/imagens/uploads/checkmaq-laudo.png" alt="CheckMaq" class="ck-doc__footer-logo">
+          <div class="ck-doc__footer-contato">
+            <div>Contato: <a href="https://wa.me/5551996050777">(51) 99605-0777</a></div>
+            <div><a href="mailto:checkmaqlaudo@gmail.com">checkmaqlaudo@gmail.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA abaixo do card -->
+      <div class="ck-doc__cta">
         <a href="https://wa.me/5551996050777?text=Olá%2C%20quero%20solicitar%20um%20Laudo%20Cautelar"
            class="btn btn--azul" target="_blank" rel="noopener"
            onclick="fbq&&fbq('track','Lead')">Solicitar Laudo Cautelar</a>
