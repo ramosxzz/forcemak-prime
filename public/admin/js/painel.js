@@ -244,7 +244,7 @@ async function carregarProdutosAdmin() {
   }
 }
 
-// Upload de fotos — slots 1 a 6
+// Upload de fotos — slots 1 a 10
 function criarUploadHandler(num) {
   const fileInput = document.getElementById(`prod-foto-file-${num}`);
   if (!fileInput) return;
@@ -279,7 +279,7 @@ function criarUploadHandler(num) {
     }
   });
 }
-for (let i = 1; i <= 6; i++) criarUploadHandler(i);
+for (let i = 1; i <= 10; i++) criarUploadHandler(i);
 
 // Salvar produto (criar ou editar)
 document.getElementById('form-produto').addEventListener('submit', async (e) => {
@@ -288,7 +288,7 @@ document.getElementById('form-produto').addEventListener('submit', async (e) => 
   const id      = document.getElementById('produto-id').value;
   const estoque = parseInt(document.getElementById('prod-estoque').value) || 0;
 
-  const imagens = [1,2,3,4,5,6]
+  const imagens = [1,2,3,4,5,6,7,8,9,10]
     .map(n => document.getElementById(`prod-imagem-${n}`).value)
     .filter(Boolean);
 
@@ -365,7 +365,7 @@ async function editarProduto(id) {
     const todasFotos = (prod.imagens && prod.imagens.length > 0)
       ? prod.imagens
       : (prod.imagem ? [prod.imagem] : []);
-    for (let n = 1; n <= 6; n++) {
+    for (let n = 1; n <= 10; n++) {
       const url = todasFotos[n-1] || '';
       document.getElementById(`prod-imagem-${n}`).value = url;
       if (url) {
@@ -387,7 +387,7 @@ async function editarProduto(id) {
 function cancelarEdicaoProduto() {
   document.getElementById('form-produto').reset();
   document.getElementById('produto-id').value = '';
-  for (let n = 1; n <= 6; n++) {
+  for (let n = 1; n <= 10; n++) {
     document.getElementById(`prod-imagem-${n}`).value = '';
     document.getElementById(`prod-foto-preview-${n}`).style.display = 'none';
   }
