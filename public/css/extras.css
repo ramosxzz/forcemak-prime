@@ -2789,22 +2789,19 @@ html, body {
   position: absolute;
   top: 6px;
   right: 6px;
-  width: 110px;
-  height: 110px;
+  width: 76px;
+  height: 76px;
   object-fit: contain;
-  opacity: 0.6;
-  mix-blend-mode: multiply;
+  opacity: 0.75;
+  filter: brightness(0) invert(1);
   pointer-events: none;
   z-index: 2;
 }
 
 .pdet-seal-watermark {
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   top: 8px;
   right: 8px;
-  left: auto;
-  transform: none;
-  opacity: 0.55;
 }
 
