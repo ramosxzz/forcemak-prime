@@ -7,6 +7,7 @@
 const estado = {
   texto:        '',
   categorias:   new Set(),
+  marcas:       new Set(),
   apenasEstoque: false,
   ordenar:      'padrao',
   precoMin:     '',
@@ -14,7 +15,6 @@ const estado = {
   anoMin:       '',
   anoMax:       '',
   horas:        '',
-  marca:        '',
   pesoMax:      '',
   todos:        []  // cache dos produtos
 };
@@ -33,6 +33,8 @@ async function carregarTodosProdutos() {
     const res = await fetch('/api/produtos');
     estado.todos = await res.json();
     montarFiltrosCategorias();
+    montarFiltrosMarcas();
+    ajustarFiltrosRanges();
   } catch {
     document.getElementById('produtos-grid').innerHTML = `
       <div class="sem-resultados">
@@ -71,6 +73,86 @@ function montarFiltrosCategorias() {
   });
 }
 
+// ─── Monta checkboxes de marcas dinamicamente ────────────────
+function montarFiltrosMarcas() {
+  const container = document.getElementById('filtros-marcas');
+  if (!container) return;
+
+  const contagem = {};
+  estado.todos.forEach(p => {
+    if (p.marca) contagem[p.marca] = (contagem[p.marca] || 0) + 1;
+  });
+
+  const marcas = Object.keys(contagem).sort();
+  const grupo  = container.closest('.filtro-grupo');
+  if (!marcas.length) { if (grupo) grupo.style.display = 'none'; return; }
+  if (grupo) grupo.style.display = '';
+
+  container.innerHTML = marcas.map(m => `
+    <label class="filtro-opcao">
+      <input type="checkbox" value="${m}" class="filtro-marca-check">
+      <span class="filtro-opcao__label">${m}</span>
+      <span class="filtro-opcao__contagem">${contagem[m]}</span>
+    </label>
+  `).join('');
+
+  container.querySelectorAll('.filtro-marca-check').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) estado.marcas.add(cb.value);
+      else            estado.marcas.delete(cb.value);
+      renderizarProdutos(true);
+    });
+  });
+}
+
+// ─── Ajusta ranges/placeholders e esconde filtros vazios ──────
+function ajustarFiltrosRanges() {
+  function mostrarGrupo(id, mostrar) {
+    const el = document.getElementById(id);
+    if (el) el.closest('.filtro-grupo').style.display = mostrar ? '' : 'none';
+  }
+
+  // Preço
+  const precos = estado.todos.map(p => extrairNumero(p.valor)).filter(v => v !== null);
+  if (precos.length) {
+    const mn = Math.min(...precos), mx = Math.max(...precos);
+    const fmt = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+    document.getElementById('filtro-preco-min').placeholder = fmt(mn);
+    document.getElementById('filtro-preco-max').placeholder = fmt(mx);
+    mostrarGrupo('filtro-preco-min', true);
+  } else {
+    mostrarGrupo('filtro-preco-min', false);
+  }
+
+  // Ano
+  const anos = estado.todos.map(p => parseInt(p.ano)).filter(v => !isNaN(v));
+  if (anos.length) {
+    document.getElementById('filtro-ano-min').placeholder = Math.min(...anos);
+    document.getElementById('filtro-ano-max').placeholder = Math.max(...anos);
+    mostrarGrupo('filtro-ano-min', true);
+  } else {
+    mostrarGrupo('filtro-ano-min', false);
+  }
+
+  // Horímetro
+  const horas = estado.todos.map(p => extrairNumero(p.horimetro)).filter(v => v !== null);
+  if (horas.length) {
+    document.getElementById('filtro-horas-max').placeholder = 'Máx: ' + Math.max(...horas).toLocaleString('pt-BR') + 'h';
+    mostrarGrupo('filtro-horas-max', true);
+  } else {
+    mostrarGrupo('filtro-horas-max', false);
+  }
+
+  // Peso
+  const pesos = estado.todos.map(p => extrairNumero(p.peso)).filter(v => v !== null);
+  if (pesos.length) {
+    document.getElementById('filtro-peso-max').placeholder = 'Máx: ' + Math.max(...pesos) + 't';
+    mostrarGrupo('filtro-peso-max', true);
+  } else {
+    mostrarGrupo('filtro-peso-max', false);
+  }
+}
+
 // ─── Eventos ─────────────────────────────────────────────────
 function iniciarEventos() {
   const inputBusca = document.getElementById('busca-input');
@@ -105,7 +187,6 @@ function iniciarEventos() {
   bindFiltroInput('filtro-ano-min',    v => { estado.anoMin   = v; });
   bindFiltroInput('filtro-ano-max',    v => { estado.anoMax   = v; });
   bindFiltroInput('filtro-horas-max',  v => { estado.horas    = v; });
-  bindFiltroInput('filtro-marca',      v => { estado.marca    = v; });   // select: valor exato
   bindFiltroInput('filtro-peso-max',   v => { estado.pesoMax  = v; });
 
   const btnLimpar = document.getElementById('btn-limpar-filtros');
@@ -123,6 +204,7 @@ function bindFiltroInput(id, setter) {
 function limparFiltros() {
   estado.texto          = '';
   estado.categorias     = new Set();
+  estado.marcas         = new Set();
   estado.apenasEstoque  = false;
   estado.ordenar        = 'padrao';
   estado.precoMin       = '';
@@ -130,17 +212,16 @@ function limparFiltros() {
   estado.anoMin         = '';
   estado.anoMax         = '';
   estado.horas          = '';
-  estado.marca          = '';
   estado.pesoMax        = '';
 
-  ['busca-input','filtro-preco-min','filtro-preco-max','filtro-ano-min','filtro-ano-max','filtro-horas-max','filtro-marca','filtro-peso-max'].forEach(id => {
+  ['busca-input','filtro-preco-min','filtro-preco-max','filtro-ano-min','filtro-ano-max','filtro-horas-max','filtro-peso-max'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
   document.getElementById('switch-estoque')?.classList.remove('ativo');
   const select = document.getElementById('ordenar-select');
   if (select) select.value = 'padrao';
-  document.querySelectorAll('.filtro-categoria-check').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.filtro-categoria-check, .filtro-marca-check').forEach(cb => cb.checked = false);
 
   renderizarProdutos(true);
 }
@@ -183,8 +264,8 @@ function filtrarProdutos() {
       if (h !== null && h > parseFloat(estado.horas)) return false;
     }
 
-    // Marca (select — comparação exata)
-    if (estado.marca && (p.marca || '') !== estado.marca) return false;
+    // Marcas (checkboxes — qualquer marcada deve corresponder)
+    if (estado.marcas.size > 0 && !estado.marcas.has(p.marca || '')) return false;
 
     // Peso máximo (em toneladas — extrai número do campo)
     if (estado.pesoMax) {
