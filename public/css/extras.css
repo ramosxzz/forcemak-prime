@@ -2782,31 +2782,27 @@ html, body {
 .filtro-grupo { margin-bottom: 18px; }
 
 /* ════════════════════════════════════════════════════════════
-   CHECKMAQ SEAL
+   CHECKMAQ — marca d'água na foto do produto
    ════════════════════════════════════════════════════════════ */
-.mkt-badge-checkmaq {
-  width: 68px;
-  height: 68px;
+.mkt-seal-watermark,
+.pdet-seal-watermark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 72px;
+  height: 72px;
   object-fit: contain;
-  border-radius: 50%;
+  opacity: 0.55;
   mix-blend-mode: multiply;
-  display: block;
+  pointer-events: none;
+  z-index: 2;
 }
 
-/* Fallback: se o browser não suportar multiply, adiciona fundo escuro atrás */
-@supports not (mix-blend-mode: multiply) {
-  .mkt-badge-checkmaq {
-    background: rgba(0,0,0,0.45);
-    border-radius: 50%;
-    padding: 3px;
-  }
-}
-
-.pdet-checkmaq-seal {
-  height: 80px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-  margin-bottom: 10px;
+.pdet-seal-watermark {
+  width: 90px;
+  height: 90px;
+  top: 12px;
+  right: 14px;
+  opacity: 0.5;
 }
 

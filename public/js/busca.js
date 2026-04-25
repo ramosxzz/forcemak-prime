@@ -334,9 +334,10 @@ function renderizarProdutos(rolarParaGrid = false) {
 function gerarCardHTML(p, i) {
   const semEstoque = p.estoque <= 0 ? 'sem-estoque' : '';
 
-  // Badges de condição
+  // Badges de condição (esquerda)
   const badgeCondicao = p.condicao ? badgeCondicaoHTML(p.condicao) : '';
-  const badgeDestaque = p.destaque ? '<img src="/imagens/uploads/checkmaq-aprovado.png" class="mkt-badge-checkmaq" alt="CheckMaq Aprovado">' : '';
+  // Marca d'água CheckMaq (canto superior direito)
+  const sealWatermark = p.destaque ? '<img src="/imagens/uploads/checkmaq-aprovado.png" class="mkt-seal-watermark" alt="CheckMaq Aprovado">' : '';
 
   const precoHTML = p.valor
     ? `<div class="mkt-preco">${formatarPreco(p.valor)}</div>`
@@ -353,8 +354,8 @@ function gerarCardHTML(p, i) {
         ${imgHTML}
         <div class="mkt-badges-topo">
           ${badgeCondicao}
-          ${badgeDestaque}
         </div>
+        ${sealWatermark}
       </div>
       <div class="produto-card__corpo mkt-card__corpo">
         <span class="produto-card__categoria">${p.categoria}</span>
