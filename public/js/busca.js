@@ -255,17 +255,7 @@ function gerarCardHTML(p, i) {
 
   // Badges de condição
   const badgeCondicao = p.condicao ? badgeCondicaoHTML(p.condicao) : '';
-  const badgeDestaque = p.destaque ? '<span class="mkt-badge mkt-badge--destaque">Destaque</span>' : '';
-
-  // Specs visíveis no card
-  const specs = [];
-  if (p.marca)       specs.push(`<div class="mkt-spec"><span class="mkt-spec__label">Marca</span><strong>${p.marca}</strong></div>`);
-  if (p.ano)         specs.push(`<div class="mkt-spec"><span class="mkt-spec__label">Ano</span><strong>${p.ano}</strong></div>`);
-  if (p.horimetro)   specs.push(`<div class="mkt-spec"><span class="mkt-spec__label">Horímetro</span><strong>${p.horimetro}</strong></div>`);
-  if (p.localizacao) specs.push(`<div class="mkt-spec"><span class="mkt-spec__label">Local</span><strong>${p.localizacao}</strong></div>`);
-  if (p.peso)        specs.push(`<div class="mkt-spec"><span class="mkt-spec__label">Peso</span><strong>${p.peso}</strong></div>`);
-
-  const specsHTML = specs.length ? `<div class="mkt-specs">${specs.join('')}</div>` : '';
+  const badgeDestaque = p.destaque ? '<img src="/imagens/uploads/checkmaq-aprovado.png" class="mkt-badge-checkmaq" alt="CheckMaq Aprovado">' : '';
 
   const precoHTML = p.valor
     ? `<div class="mkt-preco">${formatarPreco(p.valor)}</div>`
@@ -288,7 +278,6 @@ function gerarCardHTML(p, i) {
       <div class="produto-card__corpo mkt-card__corpo">
         <span class="produto-card__categoria">${p.categoria}</span>
         <h3 class="produto-card__nome">${destacarTexto(p.nome, estado.texto)}</h3>
-        ${specsHTML}
         ${precoHTML}
         <div class="mkt-card__rodape">
           ${badgeEstoqueHTML(p.estoque)}
