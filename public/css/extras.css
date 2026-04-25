@@ -2195,17 +2195,26 @@ html, body {
     grid-template-columns: 1fr;
     max-height: 95vh;
     border-radius: 16px;
+    overflow-x: hidden;
   }
 
   .eq-modal__img-wrap { min-height: 220px; }
   .eq-modal__img      { min-height: 220px; }
 
+  .eq-modal__galeria  { min-width: 0; width: 100%; }
+
   .eq-modal__info {
     padding: 24px 22px 28px;
     gap: 12px;
+    min-width: 0;
   }
 
-  .eq-modal__nome { font-size: 1.25rem; }
+  .eq-modal__nome {
+    font-size: 1.15rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
 }
 
 /* Hero — 2 silhuetas: só no mobile */

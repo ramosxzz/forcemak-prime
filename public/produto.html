@@ -276,12 +276,14 @@
     /* Responsivo */
     @media (max-width: 960px) {
       .pdet__grid { grid-template-columns: 1fr; gap: 24px; }
-      .pdet__galeria { position: static; }
+      .pdet__galeria { position: static; min-width: 0; }
+      .pdet__info { min-width: 0; }
       .pdet__gal-wrap { aspect-ratio: 16/10; }
     }
     @media (max-width: 600px) {
       .pdet { padding: 80px 0 60px; }
-      .pdet__info { padding: 22px 18px; border-radius: 16px; }
+      .pdet__info { padding: 22px 18px; border-radius: 16px; min-width: 0; }
+      .pdet__nome { word-break: break-word; overflow-wrap: break-word; }
       .pdet__specs { grid-template-columns: 1fr 1fr; gap: 6px; }
       .pdet__preco { font-size: 1.7rem; }
       .pdet__card-sec { padding: 20px; border-radius: 14px; }
