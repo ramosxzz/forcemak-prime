@@ -325,6 +325,8 @@ app.post('/api/capi-event', (req, res) => {
   const { eventName, eventSourceUrl, customData } = req.body;
   if (!eventName) return res.status(400).json({ erro: 'eventName obrigatório' });
 
+  console.log(`[CAPI] Evento recebido: ${eventName} | token configurado: ${!!CAPI_TOKEN}`);
+
   enviarEventoCAPI([{
     event_name:       eventName,
     event_time:       Math.floor(Date.now() / 1000),
@@ -335,7 +337,11 @@ app.post('/api/capi-event', (req, res) => {
       client_user_agent: req.headers['user-agent']
     },
     ...(customData ? { custom_data: customData } : {})
-  }]).catch(() => {});
+  }]).then(r => {
+    console.log(`[CAPI] Resposta Meta para ${eventName}:`, JSON.stringify(r));
+  }).catch(err => {
+    console.error(`[CAPI] Erro ao enviar ${eventName}:`, err);
+  });
 
   res.json({ sucesso: true });
 });
