@@ -286,6 +286,12 @@ function iniciarTransicoesDePagina() {
   const overlay = document.getElementById('overlay-transicao');
   if (!overlay || typeof gsap === 'undefined') return;
 
+  // Garante que overlay some mesmo ao usar o botão "voltar" (bfcache)
+  window.addEventListener('pageshow', (e) => {
+    overlay.style.transform = 'scaleY(0)';
+    overlay.style.pointerEvents = 'none';
+  });
+
   // Animação de entrada (página está carregando)
   gsap.fromTo(overlay,
     { scaleY: 1, transformOrigin: 'top' },

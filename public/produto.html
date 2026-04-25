@@ -490,6 +490,15 @@
     </div>
   </footer>
 
+  <!-- Lightbox de foto -->
+  <div id="pdet-lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:10000;display:none;align-items:center;justify-content:center;touch-action:pan-y;">
+    <button onclick="fecharLightbox()" aria-label="Fechar" style="position:absolute;top:18px;right:20px;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:1.8rem;width:46px;height:46px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
+    <button id="lb-prev" onclick="moverLightbox(-1)" aria-label="Anterior" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:2rem;width:50px;height:50px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2;">&#8249;</button>
+    <img id="lb-img" src="" alt="" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:6px;user-select:none;">
+    <span id="lb-counter" style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#fff;font-size:0.8rem;font-weight:700;padding:4px 14px;border-radius:20px;display:none;"></span>
+    <button id="lb-next" onclick="moverLightbox(1)" aria-label="Próxima" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:2rem;width:50px;height:50px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2;">&#8250;</button>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="/js/principal.js"></script>
   <script>
@@ -574,6 +583,68 @@
         renderFoto();
       }
     }, { passive: true });
+
+    // Abrir lightbox ao clicar na foto principal
+    wrap.style.cursor = 'zoom-in';
+    wrap.addEventListener('click', (e) => {
+      if (e.target.closest('.pdet__nav')) return;
+      if (fotos.length > 0) abrirLightbox(fotoIdx);
+    });
+
+    // ── Lightbox ────────────────────────────────────────────
+    let lbIdx = 0;
+    const lb        = document.getElementById('pdet-lightbox');
+    const lbImg     = document.getElementById('lb-img');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbPrev    = document.getElementById('lb-prev');
+    const lbNext    = document.getElementById('lb-next');
+
+    function atualizarLightbox() {
+      lbImg.src = fotos[lbIdx];
+      const multi = fotos.length > 1;
+      lbPrev.style.display    = multi ? 'flex' : 'none';
+      lbNext.style.display    = multi ? 'flex' : 'none';
+      lbCounter.style.display = multi ? 'block' : 'none';
+      if (multi) lbCounter.textContent = `${lbIdx + 1} / ${fotos.length}`;
+    }
+
+    window.abrirLightbox = function(idx) {
+      lbIdx = idx;
+      atualizarLightbox();
+      lb.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.fecharLightbox = function() {
+      lb.style.display = 'none';
+      document.body.style.overflow = '';
+    };
+
+    window.moverLightbox = function(dir) {
+      lbIdx = ((lbIdx + dir) + fotos.length) % fotos.length;
+      atualizarLightbox();
+    };
+
+    // Fechar ao clicar no fundo
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) fecharLightbox();
+    });
+
+    // Swipe no lightbox
+    let lbTsX = 0;
+    lb.addEventListener('touchstart', e => { lbTsX = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - lbTsX;
+      if (Math.abs(dx) > 50 && fotos.length > 1) moverLightbox(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    // Teclado
+    document.addEventListener('keydown', (e) => {
+      if (lb.style.display !== 'flex') return;
+      if (e.key === 'Escape')    fecharLightbox();
+      if (e.key === 'ArrowLeft')  moverLightbox(-1);
+      if (e.key === 'ArrowRight') moverLightbox(1);
+    });
 
     function formatarPreco(valor) {
       if (!valor) return null;
