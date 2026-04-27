@@ -264,11 +264,59 @@ app.delete('/api/produtos/:id', verificarToken, (req, res) => {
 
 
 // ╔══════════════════════════════════════════════════════════════╗
+// ║  MARCA D'ÁGUA — CheckMaq (top-right, branca, semi-opaca)     ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+const LOGO_PATH = path.join(__dirname, 'public', 'imagens', 'uploads', 'checkmaq-laudo.png');
+
+async function aplicarMarcaDagua(imagemPath) {
+  const ext = path.extname(imagemPath).toLowerCase();
+  if (!['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) return;
+  if (!fs.existsSync(LOGO_PATH)) return;
+
+  try {
+    const { Jimp } = await import('jimp');
+
+    const imagem = await Jimp.read(imagemPath);
+    const logo   = await Jimp.read(LOGO_PATH);
+
+    // Redimensiona logo para ~13% da largura da foto
+    const logoW = Math.round(imagem.bitmap.width * 0.13);
+    logo.resize({ w: logoW });
+
+    // Converte pixels escuros em branco semi-transparente (marca d'água clara)
+    logo.scan(0, 0, logo.bitmap.width, logo.bitmap.height, (px, py, idx) => {
+      const r   = logo.bitmap.data[idx];
+      const g   = logo.bitmap.data[idx + 1];
+      const b   = logo.bitmap.data[idx + 2];
+      const lum = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+      // Pixels escuros → opaco; pixels claros → transparente
+      logo.bitmap.data[idx]     = 255;
+      logo.bitmap.data[idx + 1] = 255;
+      logo.bitmap.data[idx + 2] = 255;
+      logo.bitmap.data[idx + 3] = Math.round((255 - lum) * 0.72);
+    });
+
+    // Canto superior direito, margem de 2% da largura
+    const margem = Math.round(imagem.bitmap.width * 0.02);
+    const x = imagem.bitmap.width  - logo.bitmap.width  - margem;
+    const y = margem;
+
+    imagem.composite(logo, x, y);
+    await imagem.write(imagemPath);
+  } catch (e) {
+    console.error('[watermark]', e.message);
+  }
+}
+
+
+// ╔══════════════════════════════════════════════════════════════╗
 // ║  ROTAS - UPLOAD DE IMAGENS                                   ║
 // ╚══════════════════════════════════════════════════════════════╝
 
-app.post('/api/upload', verificarToken, upload.single('imagem'), (req, res) => {
+app.post('/api/upload', verificarToken, upload.single('imagem'), async (req, res) => {
   if (!req.file) return res.status(400).json({ erro: 'Nenhuma imagem recebida' });
+  await aplicarMarcaDagua(req.file.path);
   res.json({ url: '/imagens/uploads/' + req.file.filename });
 });
 
