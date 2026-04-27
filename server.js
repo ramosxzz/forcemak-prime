@@ -320,12 +320,12 @@ app.post('/api/contato', (req, res) => {
   res.json({ sucesso: true });
 });
 
-// Endpoint para eventos CAPI disparados pelo browser (PageView, ViewContent, Contact)
+// Endpoint para eventos CAPI disparados pelo browser (PageView, ViewContent, Contact, Lead)
 app.post('/api/capi-event', (req, res) => {
-  const { eventName, eventSourceUrl, customData } = req.body;
+  const { eventName, eventSourceUrl, eventId, customData } = req.body;
   if (!eventName) return res.status(400).json({ erro: 'eventName obrigatório' });
 
-  enviarEventoCAPI([{
+  const evento = {
     event_name:       eventName,
     event_time:       Math.floor(Date.now() / 1000),
     action_source:    'website',
@@ -334,9 +334,11 @@ app.post('/api/capi-event', (req, res) => {
       client_ip_address: req.ip,
       client_user_agent: req.headers['user-agent']
     },
-    ...(customData ? { custom_data: customData } : {})
-  }]).catch(() => {});
+    ...(eventId     ? { event_id:    eventId }    : {}),
+    ...(customData  ? { custom_data: customData }  : {})
+  };
 
+  enviarEventoCAPI([evento]).catch(() => {});
   res.json({ sucesso: true });
 });
 

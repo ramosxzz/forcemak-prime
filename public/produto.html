@@ -779,8 +779,9 @@
         loading.style.display  = 'none';
         conteudo.style.display = 'block';
 
-        if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: p.nome, content_category: p.categoria });
-        if (typeof enviarCapiViewContent === 'function') enviarCapiViewContent(p.nome, p.categoria);
+        var _vcId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now();
+        if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: p.nome, content_category: p.categoria }, { eventID: _vcId });
+        if (typeof enviarCapiViewContent === 'function') enviarCapiViewContent(p.nome, p.categoria, _vcId);
 
       } catch(e) {
         loading.style.display = 'none';

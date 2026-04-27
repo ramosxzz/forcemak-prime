@@ -43,8 +43,10 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1433120138425099');
-    fbq('track', 'PageView');
-    fbq('track', 'ViewContent', { content_category: 'Equipamentos' });
+    window._fbPageViewId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now();
+    fbq('track', 'PageView', {}, { eventID: window._fbPageViewId });
+    var _vcCatId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now();
+    fbq('track', 'ViewContent', { content_category: 'Equipamentos' }, { eventID: _vcCatId });
   </script>
   <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1433120138425099&ev=PageView&noscript=1"></noscript>

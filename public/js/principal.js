@@ -26,48 +26,59 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ════════════════════════════════════════════════════════════
-// META CONVERSIONS API — duplicação server-side
+// META CONVERSIONS API — duplicação server-side com event_id
 // ════════════════════════════════════════════════════════════
+function gerarEventId() {
+  return typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2) + Date.now();
+}
+
 function enviarCapiPageView() {
+  const eventId = window._fbPageViewId || gerarEventId();
   fetch('/api/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventName:      'PageView',
-      eventSourceUrl: window.location.href
+      eventSourceUrl: window.location.href,
+      eventId
     })
   }).catch(() => {});
 }
 
-function enviarCapiContato() {
+function enviarCapiContato(eventId) {
   fetch('/api/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventName:      'Contact',
-      eventSourceUrl: window.location.href
+      eventSourceUrl: window.location.href,
+      eventId
     })
   }).catch(() => {});
 }
 
-function enviarCapiLead() {
+function enviarCapiLead(eventId) {
   fetch('/api/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventName:      'Lead',
-      eventSourceUrl: window.location.href
+      eventSourceUrl: window.location.href,
+      eventId
     })
   }).catch(() => {});
 }
 
-function enviarCapiViewContent(nome, categoria) {
+function enviarCapiViewContent(nome, categoria, eventId) {
   fetch('/api/capi-event', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventName:      'ViewContent',
       eventSourceUrl: window.location.href,
+      eventId,
       customData:     { content_name: nome || '', content_category: categoria || '' }
     })
   }).catch(() => {});
@@ -356,8 +367,9 @@ if (formContato) {
         msgEl.className   = 'formulario__mensagem sucesso';
         msgEl.textContent = '✅ Mensagem enviada com sucesso! Em breve entraremos em contato.';
         formContato.reset();
-        if (typeof fbq !== 'undefined') fbq('track', 'Contact');
-        enviarCapiContato();
+        const _evId = gerarEventId();
+        if (typeof fbq !== 'undefined') fbq('track', 'Contact', {}, { eventID: _evId });
+        enviarCapiContato(_evId);
       } else {
         throw new Error(json.erro);
       }
@@ -728,8 +740,9 @@ function abrirEqModal(dadosEncoded) {
 
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: p.nome, content_category: p.categoria });
-  enviarCapiViewContent(p.nome, p.categoria);
+  const _vcId = gerarEventId();
+  if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: p.nome, content_category: p.categoria }, { eventID: _vcId });
+  enviarCapiViewContent(p.nome, p.categoria, _vcId);
 }
 
 function fecharEqModal(e) {
@@ -980,13 +993,15 @@ function mostrarCaptchaWA(destino) {
         } else {
           window.location.href = destino;
         }
-        const isLaudo = window.location.pathname.includes('laudo');
+        const isLaudo   = window.location.pathname.includes('laudo');
+        const _cId      = gerarEventId();
+        const _lId      = isLaudo ? gerarEventId() : null;
         if (typeof fbq !== 'undefined') {
-          fbq('track', 'Contact');
-          if (isLaudo) fbq('track', 'Lead');
+          fbq('track', 'Contact', {}, { eventID: _cId });
+          if (isLaudo) fbq('track', 'Lead', {}, { eventID: _lId });
         }
-        enviarCapiContato();
-        if (isLaudo) enviarCapiLead();
+        enviarCapiContato(_cId);
+        if (isLaudo) enviarCapiLead(_lId);
       }, 600);
     }, 1400);
   });
