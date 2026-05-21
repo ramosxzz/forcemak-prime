@@ -480,11 +480,26 @@ function fetchYouTubeRSS() {
   });
 }
 
+function videosYoutubeFallback() {
+  const conteudo = lerDados('conteudo.json');
+  const videos = conteudo.midia && conteudo.midia.youtube && Array.isArray(conteudo.midia.youtube.videos)
+    ? conteudo.midia.youtube.videos
+    : [];
+
+  return videos.filter(Boolean).map((videoId, index) => ({
+    videoId,
+    title: `Video Forcemak Prime ${index + 1}`,
+    published: '',
+    thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+  }));
+}
+
 app.get('/api/videos-youtube', async (req, res) => {
   try {
     const agora = Date.now();
     if (!ytCache || agora - ytCacheTs > YT_CACHE_TTL) {
-      ytCache  = await fetchYouTubeRSS();
+      const videosRss = await fetchYouTubeRSS();
+      ytCache = videosRss.length ? videosRss : videosYoutubeFallback();
       ytCacheTs = agora;
     }
     res.json(ytCache);
