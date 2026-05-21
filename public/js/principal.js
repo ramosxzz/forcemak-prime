@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   marcarLinkAtivo();
   iniciarHeroTicker();
   enviarCapiPageView();
-  // Home
-  if (document.getElementById('videos-especiais-container')) {
+  // Home: mostra apenas os vídeos em destaque. A página videos.html carrega a lista completa.
+  if (document.getElementById('videos-especiais-container') && document.getElementById('videos-canal-cta')) {
     carregarVideosEspeciais();
   }
   // Painéis legados (outras páginas que ainda usem)
