@@ -212,24 +212,30 @@ p { line-height: 1.7; }
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
 }
 
-/* Home page: nav transparent sobre fundo verde — usar texto escuro */
-body.pagina-home .nav:not(.rolando) {
+/* Páginas com topo claro: usar texto escuro no menu fixo */
+body.pagina-home .nav:not(.rolando),
+body.pagina-laudo .nav:not(.rolando) {
   background: rgba(255,255,255,0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 1px 0 rgba(17,65,86,0.08);
 }
-body.pagina-home .nav:not(.rolando) .nav__link {
+body.pagina-home .nav:not(.rolando) .nav__link,
+body.pagina-laudo .nav:not(.rolando) .nav__link {
   color: var(--azul);
 }
 body.pagina-home .nav:not(.rolando) .nav__link:hover,
-body.pagina-home .nav:not(.rolando) .nav__link.ativo {
+body.pagina-home .nav:not(.rolando) .nav__link.ativo,
+body.pagina-laudo .nav:not(.rolando) .nav__link:hover,
+body.pagina-laudo .nav:not(.rolando) .nav__link.ativo {
   color: var(--azul-escuro);
 }
-body.pagina-home .nav:not(.rolando) .nav__logo-nome {
+body.pagina-home .nav:not(.rolando) .nav__logo-nome,
+body.pagina-laudo .nav:not(.rolando) .nav__logo-nome {
   color: var(--azul);
 }
-body.pagina-home .nav:not(.rolando) .nav__hamburguer span {
+body.pagina-home .nav:not(.rolando) .nav__hamburguer span,
+body.pagina-laudo .nav:not(.rolando) .nav__hamburguer span {
   background: var(--azul);
 }
 
