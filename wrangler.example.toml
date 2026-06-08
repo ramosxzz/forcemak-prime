@@ -1,0 +1,12 @@
+name = "forcemak-prime"
+pages_build_output_dir = "public"
+compatibility_date = "2026-05-14"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "FORCEMAK_DATA"
+id = "COLE_AQUI_O_ID_DO_KV"
+
+[[r2_buckets]]
+binding = "FORCEMAK_UPLOADS"
+bucket_name = "forcemak-prime-uploads"
