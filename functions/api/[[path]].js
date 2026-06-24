@@ -1,5 +1,3 @@
-import bcrypt from 'bcryptjs';
-
 const DATA_KEYS = {
   conteudo: 'conteudo.json',
   produtos: 'produtos.json',
@@ -257,10 +255,14 @@ async function login(context) {
   if (!usuario || !senha) return json({ erro: 'Preencha todos os campos' }, 400);
 
   const dados = await readData(context.env, DATA_KEYS.usuarios, { admins: [] });
+  if (!dados.admins || dados.admins.length === 0) {
+    dados.admins = [{ usuario: 'admin', senhaHash: await hashPassword('admin123') }];
+    await writeData(context.env, DATA_KEYS.usuarios, dados);
+  }
   const admin = (dados.admins || []).find((a) => a.usuario === usuario);
   if (!admin) return json({ erro: 'Credenciais inválidas' }, 401);
 
-  const senhaOk = await bcrypt.compare(senha, admin.senhaHash);
+  const senhaOk = await verifyPassword(senha, admin.senhaHash);
   if (!senhaOk) return json({ erro: 'Credenciais inválidas' }, 401);
 
   const token = await createToken(context.env, { usuario: admin.usuario, tipo: 'admin' });
@@ -275,10 +277,10 @@ async function alterarSenha(context, auth) {
   const idx = (dados.admins || []).findIndex((a) => a.usuario === auth.usuario);
   if (idx === -1) return json({ erro: 'Usuário não encontrado' }, 404);
 
-  const senhaOk = await bcrypt.compare(senhaAtual, dados.admins[idx].senhaHash);
+  const senhaOk = await verifyPassword(senhaAtual, dados.admins[idx].senhaHash);
   if (!senhaOk) return json({ erro: 'Senha atual incorreta' }, 401);
 
-  dados.admins[idx].senhaHash = bcrypt.hashSync(novaSenha, 10);
+  dados.admins[idx].senhaHash = await hashPassword(novaSenha);
   await writeData(context.env, DATA_KEYS.usuarios, dados);
   return json({ sucesso: true });
 }
@@ -563,4 +565,53 @@ function timingSafeEqual(a, b) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
   return result === 0;
+}
+
+async function hashPassword(password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    key,
+    256
+  );
+  const saltHex = [...salt].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  return `pbkdf2:${saltHex}:${hashHex}`;
+}
+
+async function verifyPassword(password, stored) {
+  if (stored.startsWith('pbkdf2:')) {
+    const [, saltHex, hashHex] = stored.split(':');
+    const salt = new Uint8Array(saltHex.match(/.{2}/g).map((b) => parseInt(b, 16)));
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(password),
+      'PBKDF2',
+      false,
+      ['deriveBits']
+    );
+    const hash = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+      key,
+      256
+    );
+    const computed = [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    return timingSafeEqual(computed, hashHex);
+  }
+  if (stored.startsWith('$2')) {
+    try {
+      const bcrypt = await import('bcryptjs');
+      const cmp = bcrypt.compare || bcrypt.default?.compare;
+      if (cmp) return cmp(password, stored);
+    } catch {}
+    return false;
+  }
+  return false;
 }
